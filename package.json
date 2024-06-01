@@ -7,7 +7,7 @@
     "build": "yarn run clean && yarn run compile",
     "compile": "tsc",
     "clean": "rm -rf dist",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "coverage": "jest --coverage",
     "serve:production": "node ./dist/app.js",
     "serve:local": "npx nodemon -L --watch './**/*.ts' --exec NODE_OPTIONS='newrelic ts-node --files' -r dotenv/config src/app.ts",
