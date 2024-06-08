@@ -3,9 +3,8 @@ dist
 .idea
 
 # Logs
-logs
-*.log
 npm-debug.log*
+newrelic_agent.log*
 yarn-debug.log*
 yarn-error.log*
 
