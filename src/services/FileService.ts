@@ -1,9 +1,8 @@
 import fs from 'fs'
-import { promisify } from 'util'
+import {Worker} from 'worker_threads'
+import {CustomError} from "../tools/customError"
 import { WorkerResolver } from '../workers/WorkerResolver'
 import { FileProcessResponseDTO } from '../dtos/FileProcessResponseDTO'
-
-const readdir = promisify(fs.readdir)
 
 export class FileService {
   readonly DIRECTORY_PATH: string = './logs'
@@ -14,15 +13,22 @@ export class FileService {
     this.workerResolver = workerResolver
   }
 
-  async process(workerType: string): Promise<FileProcessResponseDTO> {
+  process(workerType: string): FileProcessResponseDTO {
     const results: FileProcessResponseDTO = {}
-    const files: string[] = await readdir(this.DIRECTORY_PATH)
 
-    await Promise.all(
-      files.map(async (file: string): Promise<void> => {
-        results[file] = await this.workerResolver.runWorker(file, workerType, this.DIRECTORY_PATH)
-      }),
-    )
+    fs.readdir(this.DIRECTORY_PATH, (_err: NodeJS.ErrnoException | null, files: string[]): void => {
+      files.forEach((file: string): void => {
+        const worker: Worker = this.workerResolver.runWorker(file, workerType, this.DIRECTORY_PATH)
+
+        worker.on('message', (result) => {
+          results[file] = result.resultData
+        })
+
+        worker.on('error', (error: Error) => {
+          throw new CustomError(error.message)
+        })
+      })
+    })
 
     return results
   }
