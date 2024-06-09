@@ -2,10 +2,11 @@ import fs from 'fs'
 import path from 'path'
 import { Worker } from 'worker_threads'
 import { BAD_REQUEST } from 'http-status'
+import {WorkerDTO} from '../dtos/WorkerDTO'
 import { CustomError } from '../tools/customError'
 
 export class WorkerResolver {
-  runWorker(file: string, workerType: string, directory: string): Promise<never> {
+  runWorker(file: string, workerType: string, directory: string): Promise<WorkerDTO> {
     const workerPath: string = `./dist/src/workers/${workerType}Worker.js`
 
     if (!fs.existsSync(workerPath)) {

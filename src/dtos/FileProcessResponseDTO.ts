@@ -1,3 +1,5 @@
+import {WorkerDTO} from './WorkerDTO'
+
 export type FileProcessResponseDTO = {
-    [key: string]: JSON
+    [key: string]: WorkerDTO
 }
